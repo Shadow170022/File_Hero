@@ -4,14 +4,14 @@ using UnityEngine;
 
 public class NoteAccuracyController : MonoBehaviour
 {
-    public NoteTypeSpecifier noteTypeSpecifier;
     public NoteKeyController noteKeyController;
     public GameObject[] childVerifiers;
-    private string noteType;
+    public string noteType;
+    public PointsController pointsController;
     // Start is called before the first frame update
     void Start()
     {
-        noteType = noteTypeSpecifier.noteType;
+
     }
 
     // Update is called once per frame
@@ -22,9 +22,13 @@ public class NoteAccuracyController : MonoBehaviour
 
     public void OnTriggerStay(Collider other)
     {
-        if(noteKeyController.noteVerifierPressed){
+        if(noteKeyController.noteVerifierPressed && noteKeyController.isEnabled){
             if (other.gameObject.tag == noteType)
             {
+                noteKeyController.isEnabled = false;
+                noteKeyController.badNoteParticleSystem.Clear();
+                noteKeyController.goodNoteParticleSystem.Clear();
+                noteKeyController.perfectNoteParticleSystem.Clear();
                 //Check for every childVerifiers if it has a trigger
                 foreach (GameObject childVerifier in childVerifiers)
                 {
@@ -33,12 +37,27 @@ public class NoteAccuracyController : MonoBehaviour
                     {
                         //Change tag of other to "Untagged"
                         other.gameObject.tag = "Untagged";
-                        Debug.Log("NoteValue: " + childTriggerVerifier.noteValue);
-                        Debug.Log("NotePoints: " + childTriggerVerifier.notePoints);
+                        //Debug.Log("NoteValue: " + childTriggerVerifier.noteValue);
+                        //Debug.Log("NotePoints: " + childTriggerVerifier.notePoints);
+                        pointsController.AddPoints(childTriggerVerifier.notePoints);
+                        //play NoteParticleSystem based on childTriggerVerifier.noteValue
+                        switch (childTriggerVerifier.noteValue)
+                        {
+                            case "Bad":
+                                noteKeyController.badNoteParticleSystem.Play();
+                                break;
+                            case "Good":
+                                noteKeyController.goodNoteParticleSystem.Play();
+                                break;
+                            case "Perfect":
+                                noteKeyController.perfectNoteParticleSystem.Play();
+                                break;
+                        }
                         childTriggerVerifier.hasTriggered = false;
                         break;
                     }
                 }
+                
             }
         }
     }

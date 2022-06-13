@@ -7,7 +7,7 @@ public class NoteTriggerVerifier : MonoBehaviour
     public bool hasTriggered = false;
     public string noteValue = "";
     public int notePoints = 0;
-    public NoteTypeSpecifier noteTypeSpecifier;
+    public NoteAccuracyController noteAccuracyController;
     // Start is called before the first frame update
     void Start()
     {
@@ -22,7 +22,7 @@ public class NoteTriggerVerifier : MonoBehaviour
 
     public void OnTriggerStay(Collider other)
     {
-        if (other.gameObject.tag == noteTypeSpecifier.noteType)
+        if (other.gameObject.tag == noteAccuracyController.noteType)
         {
             hasTriggered = true;
         }
@@ -30,7 +30,7 @@ public class NoteTriggerVerifier : MonoBehaviour
 
     public void OnTriggerExit(Collider other)
     {
-        if (other.gameObject.tag == noteTypeSpecifier.noteType)
+        if (other.gameObject.tag == noteAccuracyController.noteType)
         {
             hasTriggered = false;
         }
